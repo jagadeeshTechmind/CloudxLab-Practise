@@ -1,0 +1,22 @@
+https://cloudxlab.com/assessment/slide/37/building-spark-application-end-to-end/574/approach-1-using-spark-shell
+Apache Toree
+------------
+var accessLogs = sc.textFile("/data/spark/project/access/access.log.45.gz")
+val acc = accessLogs.take(10)
+def containsIP(line:String) :Boolean = return line matches "^([0-9\\.]+) .*$"
+var ipaccess= accessLogs.filter(containsIP)
+ipaccess.take(1).foreach(println)
+def extractIP(line:String): String = {
+    val pattern = "^([0-9\\.]+) .*$".r
+    val pattern(ip:String)=line
+    ip.toString
+}
+val ips = ipaccess.map(line => (extractIP(line),1))
+ips.take(5).foreach(println)
+
+var ipcounts = ips.reduceByKey((a,b) => (a+b))
+//ipcounts.take(10)
+var ipordered = ipcounts.sortBy(f=> f._2,false)
+or
+var ipordered = ipcounts.sortBy(f=> f._2,true)
+ipordered.take(10).foreach(line => println(line._2))
