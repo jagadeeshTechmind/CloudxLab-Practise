@@ -1,2 +1,2 @@
 # CloudxLab Practise
-Contains practise session
+Contains self practise session
