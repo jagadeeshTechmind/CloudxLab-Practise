@@ -1,1 +1,27 @@
 
+
+var accessLogs = sc.textFile("/data/spark/project/access/access.log.45.gz")
+accessLogs.take(10)
+
+def containsIP(line:String) :Boolean = return line matches "^([0-9\\.]+) .*$"
+var ipaccess= accessLogs.filter(containsIP)
+def extractIP(line:String): String = {
+    val pattern = "^([0-9\\.]+) .*$".r
+    val pattern(ip:String)=line
+    ip.toString
+}
+val ips = ipaccess.map(line => (extractIP(line),1))
+ips.take(5).foreach(println)
+
+or alternate
+
+//my snippet
+accessLogs.take(3).foreach(line => {
+      val filter:Boolean = line matches "^([0-9//.]+).*$"
+      println(filter)
+      if(filter) {
+      	 val pattern = "^([0-9\\.]+) .*$".r
+      	  val pattern(ip:String)=line
+      	  println("ip=" + ip)
+      }
+      })
