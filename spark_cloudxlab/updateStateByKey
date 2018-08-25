@@ -1,0 +1,32 @@
+Spark stream introduces concept of DStream(Discretized stream) a Dstream is nothing but streams of RDD where one RDD holds one time of data
+i.e 1 batch=1 RDD, One of the powerful function exposed by DStream is updateStateByKey that helps us maintain state ,
+
+Function specified in updateStateByKey is applied to all the existing keys in every batch, regardless of whether they have a new data or not, if the update function return null, the key value will be eliminated
+The function updates the prevoious state of all the key with the new value if present for example
+
+Example : While in DStream there are micro batches
+Batch 1 = 1,1,1 are the values we get in Streaming engine after reducing these by key we will get (1,3) as output
+Batch 2 = 2,3 are the values we get in streaming engine output (1,3)(2,1)(3,1)
+Batch 3 =1 streaming engine output (1,4)(2,1)(3,1)
+
+
+def updateFunction(newValues: Seq[(Int)], runningCount: Option[(Int)]): Option[(Int)] = {
+var result: Option[(Int)] = null
+if(newValues.isEmpty){ //check if the key is present in new batch if not then return the old values
+result=Some(runningCount.get)
+}
+else{
+newValues.foreach { x => {// if we have keys in new batch ,iterate over them and add it
+if(runningCount.isEmpty){
+result=Some(x)// if no previous value return the new one
+}else{
+result=Some(x+runningCount.get) // update and return the value
+}
+} }
+}
+result
+}
+
+// call it as
+val reducedRDD=keyValuelines.reduceByKey((x,y)=>(x+y))
+val updatedRdd= reducedRDD.updateStateByKey(updateFunction)
