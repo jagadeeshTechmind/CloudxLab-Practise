@@ -1,1 +1,18 @@
 
+http://www.itversity.com/lessons/problem-1-importing-and-exporting-data-with-transformations/
+
+https://github.com/dgadiraju/code/blob/master/hadoop/edw/database/retail_db.sql
+
+sqoop import --connect jdbc:mysql://localhost/retail_db --username root -P -table orders -m 1 --delete-target-dir   --target-dir /user/hduser/itversity --as-avrodatafile;
+
+
+sqoop import \
+--connect jdbc:mysql://localhost/retail_db \
+--username root \
+-P\
+--table orders \
+--compress \
+--compression-codec org.apache.hadoop.io.compress.SnappyCodec \
+--target-dir /user/hduser/itversity/orders \
+--as-avrodatafile;
+
