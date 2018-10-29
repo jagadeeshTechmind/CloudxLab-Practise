@@ -1,0 +1,52 @@
+Ref : https://cloudxlab.com/blog/real-time-analytics-dashboard-with-apache-spark-kafka/#more-161
+https://github.com/singhabhinav/cloudxlab/tree/master/spark/examples/streaming  (github)
+
+Kafka (Stage 2)
+------
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+Sample kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic order-data
+
+(-> from the workout  > kafka-topics.sh --create --zookeeper ip-172-31-20-58.ec2.internal:2181 --replication-factor 1 --partitions 1 --topic jagadeeshtopic) (use ip to below kafka command)
+
+Create topic
+ExecuteCommand>kafka-topics.sh --create --zookeeper ip-172-31-20-58.ec2.internal:2181 --replication-factor 1 --partitions 1 --topic jagadeesh_order-data
+ 
+
+ 
+spark  (Stage 3)
+-----
+
+cd spark/projects/real-time-analytics-dashboard/kafka
+ 
+ ExecuteCommand>/bin/bash put_order_data_in_topic.sh ../data/order_data/ ip-172-31-20-58.ec2.internal:6667 jagadeesh_order-data
+# Script pushes CSV files one by one to Kafka topic in one-minute interval
+# Let the script run. Do not close the terminal
+
+
+ExecuteCommand>spark-submit --jars spark-streaming-kafka-assembly_2.10-1.6.0.jar spark_streaming_order_status.py ip-172-31-20-58.ec2.internal:2181 jagadeesh_order-data
+
+Stage 5
+Run Node.js server
+
+cd ~/cloudxlab
+cd spark/projects/real-time-analytics-dashboard/node
+ 
+# Install dependencies as specified in package.json
+npm install
+ 
+# Open index.js using vi or nano
+# Replace localhost with zookeeper server hostname
+# Replace order-min-data with abhinav9884-order-one-min-data
+# Save the file
+ 
+# Run the node server
+ 
+node index.js
+ 
+# Let the server run. Do not close the terminal
+
+Stage 6
+Access node server
+<web console>:<port>  (port is mentioned in index.js from nodejs server)  like var port = 3001;
+http://g.cloudxlab.com:3001
