@@ -1,0 +1,66 @@
+https://cloudxlab.com/assessment/slide/30/spark-streaming/655/apache-kafka-hands-on
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin  //set kafka 
+
+Go to zookeeper
+Click on 2nd ZooKeeper Server
+Take ip like below
+ip-172-31-20-58.ec2.internal
+
+Create
+-------
+kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic abhinav_test
+to 
+kafka-topics.sh --create --zookeeper ip-172-31-20-58.ec2.internal:2181 --replication-factor 1 --partitions 1 --topic jagadeeshtopic
+
+check
+------
+kafka-topics.sh  --list --zookeeper ip-172-31-20-58.ec2.internal:2181 | grep jagadeesh
+
+open another console for producer
+-------------------
+zookeper-client 
+-> comes like below and issue command
+[zk: localhost:2181(CONNECTED) 0] ls /brokers/ids
+resp:[0]
+[zk: localhost:2181(CONNECTED) 0] get /brokers/ids/0
+resp:
+{"jmx_port":-1,"timestamp":"1527715465403","endpoints":["PLAINTEXT://ip-172-31-13-154.ec2.internal:6667"],"host":"ip-172-31-13-154.ec2.internal","version":2,"port"
+:6667}
+cZxid = 0x39000fec63
+ctime = Wed May 30 21:24:25 UTC 2018
+mZxid = 0x39000fec63
+mtime = Wed May 30 21:24:25 UTC 2018
+pZxid = 0x39000fec63
+cversion = 0
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x2629d40297f01ad
+dataLength = 169
+numChildren = 0
+
+Note : ip-172-31-13-154.ec2.internal take ip from get /brokers/ids/0
+
+
+kafka-console-producer.sh --broker-list ip-172-31-13-154.ec2.internal:6667 --topic abhinav_test
+to
+kafka-console-producer.sh --broker-list ip-172-31-13-154.ec2.internal:6667 --topic jagadeeshtopic  
+//changed ip and topic
+command like below
+[jagadeeshtechmind9670@ip-172-31-20-58 ~]$ kafka-console-producer.sh --broker-list ip-172-31-13-154.ec2.internal:6667 --topic jagadeeshtopic
+my first kafka message
+
+open another console for consumer
+---------------------------------
+export PATH=$PATH:/usr/hdp/current/kafka-broker/bin
+
+kafka-console-consumer.sh --zookeeper localhost:2181 --topic abhinav_test --from-beginning
+to
+kafka-console-consumer.sh --zookeeper ip-172-31-13-154.ec2.internal:2181 --topic jagadeeshtopic --from-beginning
+//ip same as producer
+
+you will get msg
+my first kafka message
+
+
+
+
